@@ -7,70 +7,63 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <div class="stars-bg"></div>
 
-    <div class="container">
+    <div class="container landing-container">
         <div class="birthday-badge">🎂 April 17th 🎂</div>
-        <h1>Happy Birthday, Neha! 🎉</h1>
 
-        <div class="story-card">
-            <p>
-                Hey Neha, I know things got a little... complicated between us.<br><br>
-                You are the <em>first</em> girl I talked to in this whole marriage setup.<br>
-                Can you make it the <em>last</em>? 🌸<br><br>
-                I sensed that you really liked me too — and I know your family has concerns.<br>
-                But can <em>you</em> overcome it?<br><br>
-                And yes yes yes — I called your mom. <span class="telugu-line">నీతో ఉండాలని తపన తప్ప, మరే ఉద్దేశం లేదు!</span> 🙈
-            </p>
-        </div>
+        <div class="landing-cake">🎂</div>
 
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/SqjeD8tXBlc"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe>
-        </div>
+        <h1 class="landing-title">Happy Birthday, Neha!</h1>
 
-        <div class="score-card">
-            <div class="score-row pass">
-                <span class="score-label">మనస్థితి — we both know what we felt</span>
-                <span class="score-val">60 ✓</span>
-            </div>
-            <div class="score-row pass">
-                <span class="score-label">పరిస్థితి — సుఖదుఃఖాల్లో కలిసి నడవగలం</span>
-                <span class="score-val">25 ✓</span>
-            </div>
-            <div class="score-row fail">
-                <span class="score-label">గ్రహ స్థితి — the only concern</span>
-                <span class="score-val">15 ✗</span>
-            </div>
-            <div class="score-divider"></div>
-            <div class="score-total">
-                <span class="score-label">Is 15 really worth losing 85 for?</span>
-            </div>
-        </div>
+        <p class="landing-message">
+            Wishing you a day as bright and beautiful as you are. 🌸<br><br>
+            Hope this year brings you everything you've been working towards —<br>
+            the GMAT, your dreams, and a lot of good surprises. ✨
+        </p>
 
-        <p class="ask-text">Will you make me pass with 60+25? 🌸<br>
-        <span class="ask-sub">Or let just 15 decide everything? 💔</span></p>
-
-        <div class="gif-container">
-            <img id="cat-gif" src="https://media.tenor.com/EBV7OT7ACfwAAAAj/u-u-qua-qua-u-quaa.gif" alt="cute character">
-        </div>
-
-        <div class="buttons">
-            <button id="yes-btn" onclick="handleYesClick()">Haan! ✨</button>
-            <button id="no-btn" onclick="handleNoClick()">No</button>
-        </div>
-        <div id="tease-toast"></div>
+        <button class="reveal-btn" onclick="window.location.href='proposal.html'">
+            Wait... there's something more 🎁
+        </button>
     </div>
 
     <audio id="bg-music" loop autoplay muted>
         <source src="music/beabadoobee - Glue Song (Lyrics).mp3" type="audio/mpeg">
     </audio>
 
-    <button id="music-toggle" onclick="toggleMusic()" title="Toggle music">🔊</button>
+    <button id="music-toggle" onclick="toggleMusicLanding()" title="Toggle music">🔊</button>
 
-    <script src="script.js"></script>
+    <script>
+        // Confetti on load
+        window.addEventListener('load', () => {
+            confetti({ particleCount: 120, spread: 100, origin: { x: 0.5, y: 0.2 },
+                colors: ['#f9a8d4','#fbbf24','#c084fc','#34d399','#60a5fa','#fb7185','#fff'] })
+        })
+
+        // Music autoplay
+        const music = document.getElementById('bg-music')
+        let musicPlaying = true
+        music.muted = true
+        music.volume = 0.3
+        music.play().then(() => { music.muted = false }).catch(() => {
+            document.addEventListener('click', () => {
+                music.muted = false
+                music.play().catch(() => {})
+            }, { once: true })
+        })
+
+        function toggleMusicLanding() {
+            if (musicPlaying) {
+                music.pause(); musicPlaying = false
+                document.getElementById('music-toggle').textContent = '🔇'
+            } else {
+                music.muted = false; music.play(); musicPlaying = true
+                document.getElementById('music-toggle').textContent = '🔊'
+            }
+        }
+    </script>
 </body>
 </html>

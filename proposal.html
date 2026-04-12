@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Something to ask you... 🌸</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stars-bg"></div>
+
+    <div class="container">
+        <div class="birthday-badge">🎂 April 17th 🎂</div>
+        <h1>Happy Birthday, Neha! 🎉</h1>
+
+        <div class="story-card">
+            <p>
+                Hey Neha, I know things got a little... complicated between us.<br><br>
+                You are the <em>first</em> girl I talked to in this whole marriage setup.<br>
+                Can you make it the <em>last</em>? 🌸<br><br>
+                I sensed that you really liked me too — and I know your family has concerns.<br>
+                But can <em>you</em> overcome it?<br><br>
+                And yes yes yes — I called your mom. <span class="telugu-line">నీతో ఉండాలని తపన తప్ప, మరే ఉద్దేశం లేదు!</span> 🙈
+            </p>
+        </div>
+
+        <a href="https://youtube.com/shorts/SqjeD8tXBlc" target="_blank" class="yt-link-btn">
+            ▶ Watch this first — then come back! 👇
+        </a>
+        <p class="yt-note">opens in a new tab · 1 min watch</p>
+
+        <div class="score-card">
+            <div class="score-row pass">
+                <span class="score-label">మనస్థితి — we both know what we felt</span>
+                <span class="score-val">60 ✓</span>
+            </div>
+            <div class="score-row pass">
+                <span class="score-label">పరిస్థితి — సుఖదుఃఖాల్లో కలిసి నడవగలం</span>
+                <span class="score-val">25 ✓</span>
+            </div>
+            <div class="score-row fail">
+                <span class="score-label">గ్రహ స్థితి — the only concern</span>
+                <span class="score-val">15 ✗</span>
+            </div>
+            <div class="score-divider"></div>
+            <div class="score-total">
+                <span class="score-label">Is 15 really worth losing 85 for?</span>
+            </div>
+        </div>
+
+        <p class="ask-text">Will you make me pass with 60+25? 🌸<br>
+        <span class="ask-sub">Or let just 15 decide everything? 💔</span></p>
+
+        <div class="gif-container">
+            <img id="cat-gif" src="https://media.tenor.com/EBV7OT7ACfwAAAAj/u-u-qua-qua-u-quaa.gif" alt="cute character">
+        </div>
+
+        <div class="buttons">
+            <button id="yes-btn" onclick="handleYesClick()">Haan! ✨</button>
+            <button id="no-btn" onclick="handleNoClick()">No</button>
+        </div>
+        <div id="tease-toast"></div>
+    </div>
+
+    <audio id="bg-music" loop autoplay muted>
+        <source src="music/beabadoobee - Glue Song (Lyrics).mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="music-toggle" onclick="toggleMusic()" title="Toggle music">🔊</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
