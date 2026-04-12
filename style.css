@@ -496,6 +496,13 @@ h1 {
     font-style: italic;
 }
 
+.yes-sub-small {
+    color: #fbbf24;
+    font-size: 0.95rem;
+    font-style: italic;
+    font-weight: 700;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
