@@ -448,6 +448,22 @@ h1 {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
+/* Swipe-up hint label inside Haan! button */
+.swipe-hint {
+    display: block;
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    opacity: 0.85;
+    margin-top: 3px;
+    animation: swipeHintPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes swipeHintPulse {
+    0%, 100% { transform: translateY(0);   opacity: 0.85; }
+    50%       { transform: translateY(-3px); opacity: 1;    }
+}
+
 /* Replay button */
 .replay-btn {
     margin-top: 20px;

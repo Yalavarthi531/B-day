@@ -29,23 +29,24 @@ const yesTeasePokes = [
 ]
 
 let yesTeasedCount = 0
-
-let noClickCount = 0
+let noClickCount   = 0
 let runawayEnabled = false
-let musicPlaying = true
+let musicPlaying   = true
+
+// ── Detect touch device ───────────────────────────────────────────────────
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
 
 const catGif = document.getElementById('cat-gif')
 const yesBtn = document.getElementById('yes-btn')
-const noBtn = document.getElementById('no-btn')
-const music = document.getElementById('bg-music')
+const noBtn  = document.getElementById('no-btn')
+const music  = document.getElementById('bg-music')
 
-// Autoplay: audio starts muted (bypasses browser policy), unmute immediately
-music.muted = true
+// ── Autoplay with muted trick ─────────────────────────────────────────────
+music.muted  = true
 music.volume = 0.3
 music.play().then(() => {
     music.muted = false
 }).catch(() => {
-    // Fallback: unmute on first interaction
     document.addEventListener('click', () => {
         music.muted = false
         music.play().catch(() => {})
@@ -65,53 +66,102 @@ function toggleMusic() {
     }
 }
 
+// ── Yes button: desktop = click, mobile = swipe up ────────────────────────
 function handleYesClick() {
     if (!runawayEnabled) {
-        // Tease her to try No first
         const msg = yesTeasePokes[Math.min(yesTeasedCount, yesTeasePokes.length - 1)]
         yesTeasedCount++
         showTeaseMessage(msg)
         return
     }
-    window.location.href = 'yes.html'
+
+    if (isTouchDevice) {
+        // Mobile: don't navigate on plain tap — hint to swipe up
+        showTeaseMessage('↑ Swipe me up to say Haan! 😄')
+    } else {
+        // Desktop: plain click works fine
+        window.location.href = 'yes.html'
+    }
 }
 
+// ── Mobile swipe-up to confirm ────────────────────────────────────────────
+let swipeTouchStartY = null
+
+yesBtn.addEventListener('touchstart', function (e) {
+    if (!runawayEnabled) return          // tease handled by onclick
+    swipeTouchStartY = e.touches[0].clientY
+    yesBtn.style.transition = 'transform 0.05s'
+}, { passive: true })
+
+yesBtn.addEventListener('touchmove', function (e) {
+    if (swipeTouchStartY === null || !runawayEnabled) return
+    const dy = swipeTouchStartY - e.touches[0].clientY   // positive = upward
+    if (dy > 0) {
+        const lift = Math.min(dy * 0.65, 110)
+        const scale = 1 + dy * 0.0015
+        yesBtn.style.transform = `translateY(-${lift}px) scale(${scale})`
+    }
+}, { passive: true })
+
+yesBtn.addEventListener('touchend', function (e) {
+    if (swipeTouchStartY === null) return
+    const dy = swipeTouchStartY - e.changedTouches[0].clientY
+    swipeTouchStartY = null
+
+    if (dy >= 60 && runawayEnabled) {
+        // ✅ Confirmed — fly it off and navigate
+        yesBtn.style.transition = 'transform 0.4s cubic-bezier(0.4,0,0.2,1)'
+        yesBtn.style.transform  = 'translateY(-350px) scale(1.4)'
+        setTimeout(() => { window.location.href = 'yes.html' }, 380)
+    } else {
+        // ↩ Not enough — bounce back
+        yesBtn.style.transition = 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)'
+        yesBtn.style.transform  = 'translateY(0) scale(1)'
+        setTimeout(() => { yesBtn.style.transition = '' }, 350)
+    }
+}, { passive: true })
+
+// ── Toast ─────────────────────────────────────────────────────────────────
 function showTeaseMessage(msg) {
-    let toast = document.getElementById('tease-toast')
+    const toast = document.getElementById('tease-toast')
     toast.textContent = msg
     toast.classList.add('show')
     clearTimeout(toast._timer)
-    toast._timer = setTimeout(() => toast.classList.remove('show'), 2500)
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 2600)
 }
 
+// ── No button logic ───────────────────────────────────────────────────────
 function handleNoClick() {
     noClickCount++
 
-    // Cycle through guilt-trip messages
     const msgIndex = Math.min(noClickCount, noMessages.length - 1)
     noBtn.textContent = noMessages[msgIndex]
 
-    // Grow the Yes button bigger each time
+    // Grow Yes button
     const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize)
     yesBtn.style.fontSize = `${currentSize * 1.35}px`
     const padY = Math.min(18 + noClickCount * 5, 60)
     const padX = Math.min(45 + noClickCount * 10, 120)
     yesBtn.style.padding = `${padY}px ${padX}px`
 
-    // Shrink No button to contrast
+    // Shrink No button
     if (noClickCount >= 2) {
         const noSize = parseFloat(window.getComputedStyle(noBtn).fontSize)
         noBtn.style.fontSize = `${Math.max(noSize * 0.85, 10)}px`
     }
 
-    // Swap cat GIF through stages
-    const gifIndex = Math.min(noClickCount, gifStages.length - 1)
-    swapGif(gifStages[gifIndex])
+    // Swap GIF
+    swapGif(gifStages[Math.min(noClickCount, gifStages.length - 1)])
 
-    // Runaway starts at click 5
+    // Enable runaway at click 5
     if (noClickCount >= 5 && !runawayEnabled) {
         enableRunaway()
         runawayEnabled = true
+
+        // On mobile: update button label to hint swipe gesture
+        if (isTouchDevice) {
+            yesBtn.innerHTML = 'Haan! ✨<span class="swipe-hint">↑ swipe up ↑</span>'
+        }
     }
 }
 
@@ -124,22 +174,19 @@ function swapGif(src) {
 }
 
 function enableRunaway() {
-    noBtn.addEventListener('mouseover', runAway)
-    noBtn.addEventListener('touchstart', runAway, { passive: true })
+    noBtn.addEventListener('mouseover',   runAway)
+    noBtn.addEventListener('touchstart',  runAway, { passive: true })
 }
 
 function runAway() {
     const margin = 20
-    const btnW = noBtn.offsetWidth
-    const btnH = noBtn.offsetHeight
-    const maxX = window.innerWidth - btnW - margin
-    const maxY = window.innerHeight - btnH - margin
-
-    const randomX = Math.random() * maxX + margin / 2
-    const randomY = Math.random() * maxY + margin / 2
+    const btnW   = noBtn.offsetWidth
+    const btnH   = noBtn.offsetHeight
+    const maxX   = window.innerWidth  - btnW - margin
+    const maxY   = window.innerHeight - btnH - margin
 
     noBtn.style.position = 'fixed'
-    noBtn.style.left = `${randomX}px`
-    noBtn.style.top = `${randomY}px`
-    noBtn.style.zIndex = '50'
+    noBtn.style.left     = `${Math.random() * maxX + margin / 2}px`
+    noBtn.style.top      = `${Math.random() * maxY + margin / 2}px`
+    noBtn.style.zIndex   = '50'
 }
