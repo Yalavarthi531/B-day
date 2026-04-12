@@ -12,15 +12,15 @@ window.addEventListener('load', () => {
 })
 
 function launchConfetti() {
-    const colors = ['#ff69b4', '#ff1493', '#ff85a2', '#ffb3c1', '#ff0000', '#ff6347', '#fff', '#ffdf00']
+    const colors = ['#f9a8d4', '#fbbf24', '#c084fc', '#34d399', '#60a5fa', '#fb7185', '#fff', '#fde68a']
     const duration = 6000
     const end = Date.now() + duration
 
     // Initial big burst
     confetti({
-        particleCount: 150,
-        spread: 100,
-        origin: { x: 0.5, y: 0.3 },
+        particleCount: 180,
+        spread: 120,
+        origin: { x: 0.5, y: 0.2 },
         colors
     })
 
@@ -32,17 +32,17 @@ function launchConfetti() {
         }
 
         confetti({
-            particleCount: 40,
+            particleCount: 45,
             angle: 60,
-            spread: 55,
+            spread: 60,
             origin: { x: 0, y: 0.6 },
             colors
         })
 
         confetti({
-            particleCount: 40,
+            particleCount: 45,
             angle: 120,
-            spread: 55,
+            spread: 60,
             origin: { x: 1, y: 0.6 },
             colors
         })

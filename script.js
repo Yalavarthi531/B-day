@@ -11,21 +11,21 @@ const gifStages = [
 
 const noMessages = [
     "No",
-    "Are you positive? 🤔",
-    "Pookie please... 🥺",
-    "If you say no, I will be really sad...",
-    "I will be very sad... 😢",
-    "Please??? 💔",
-    "Don't do this to me...",
-    "Last chance! 😭",
+    "Really? On your birthday? 😶",
+    "Ugh... you're making me write 'patience' again 😩",
+    "Fine... I'll wait. Like I always do. 😮‍💨",
+    "Nuvvu call cheyyaledu, nenu wait chesanu... still here 😭",
+    "Neha... the GMAT can wait, this can't 😅",
+    "14/36 lo kuda love untundi... okasari aalochinchu 🥺",
+    "Button paaripo'taundi... like you from this decision 👀",
     "You can't catch me anyway 😜"
 ]
 
 const yesTeasePokes = [
-    "try saying no first... I bet you want to know what happens 😏",
-    "go on, hit no... just once 👀",
-    "you're missing out 😈",
-    "click no, I dare you 😏"
+    "Aren't you curious what happens when you click No first? 😏",
+    "Come on... hit No once. I dare you 👀",
+    "The drama hasn't even started yet 🎭",
+    "Neha... click No first, I promise it'll be worth it 😄"
 ]
 
 let yesTeasedCount = 0
