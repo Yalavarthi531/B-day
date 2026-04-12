@@ -3,221 +3,283 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // Responsive canvas
     const W = Math.min(480, (window.innerWidth || 480) - 24);
-    const H = 200;
+    const H = 230;
     canvas.width  = W;
     canvas.height = H;
     canvas.style.width  = W + 'px';
     canvas.style.height = H + 'px';
 
-    const GY   = H * 0.76;   // ground Y
-    const LEG  = 25, BODY = 24, ARM = 16, HEAD = 10;
-    const SX   = W - 42, SY = H * 0.21;   // sun position
+    // ── Key positions ─────────────────────────────────────────────
+    const GY = H * 0.84;          // ground level (near camera)
+    const SX = W / 2;             // sun at horizontal center
+    const SY = H * 0.13;          // sun near top-center
+    const ROAD_W = W * 0.40;      // road width at bottom
 
-    const CENTER = W / 2;
-    const GAP    = 52;                     // gap between them when they meet
-    const BMX    = CENTER - GAP / 2;       // boy   meeting X
-    const GMX    = CENTER + GAP / 2;       // girl  meeting X
+    // Base figure dimensions (at scale 1.0, i.e. at ground level)
+    const B_LEG = 26, B_BODY = 24, B_ARM = 16, B_HEAD = 10;
 
-    let bx = -35, gx = W + 35;
-    let wc = 0;
+    // ── State ────────────────────────────────────────────────────
+    let bx = -50,  girlX0 = W + 50;   // phase-1 X positions
+    let boyX  = -50,  gx = W + 50;
+    let walkY = GY;                    // shared Y for phase 3
+    let wc = 0;                        // walk cycle
     let phase = 1, pt = 0;
     let ha = 0, hs = 0, sglow = 0;
     let raf;
 
-    // ── Scene ────────────────────────────────────────────────────
-    function drawBg() {
+    const MEET_SEP = 28;               // half-gap when they meet at bottom
+
+    // perspective scale: 1.0 at GY → 0 near SY
+    function scaleAt(y) {
+        const t = Math.max(0, Math.min(1, (GY - y) / (GY - SY)));
+        return Math.max(0.01, 1.0 - t * 0.93);
+    }
+
+    // ── Scene ─────────────────────────────────────────────────────
+    function drawSky() {
         const g = ctx.createLinearGradient(0, 0, 0, GY);
-        g.addColorStop(0, '#0c0519'); g.addColorStop(1, '#311473');
-        ctx.fillStyle = g; ctx.fillRect(0, 0, W, GY);
+        g.addColorStop(0,   '#04010f');
+        g.addColorStop(0.4, '#130740');
+        g.addColorStop(1,   '#2d1060');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
 
+        // Static stars
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        [[0.08,0.06],[0.18,0.03],[0.32,0.10],[0.50,0.04],[0.62,0.08],
+         [0.78,0.05],[0.90,0.11],[0.42,0.02],[0.55,0.14],[0.25,0.07]
+        ].forEach(([fx,fy]) => {
+            ctx.beginPath();
+            ctx.arc(fx*W, fy*H, 0.9 + Math.random()*0.5, 0, Math.PI*2);
+            ctx.fill();
+        });
+
+        // Ground strip
         const g2 = ctx.createLinearGradient(0, GY, 0, H);
-        g2.addColorStop(0, '#1e0a47'); g2.addColorStop(1, '#0a0220');
-        ctx.fillStyle = g2; ctx.fillRect(0, GY, W, H - GY);
+        g2.addColorStop(0, '#1a0845'); g2.addColorStop(1, '#060112');
+        ctx.fillStyle = g2;
+        ctx.fillRect(0, GY, W, H - GY);
+    }
 
-        // ground line
-        ctx.strokeStyle = 'rgba(192,132,252,0.28)';
+    function drawRoad() {
+        // Road trapezoid (perspective converging to sun)
+        const bL = SX - ROAD_W / 2, bR = SX + ROAD_W / 2;  // bottom corners
+        const tL = SX - 4,          tR = SX + 4;            // top corners (at sun)
+
+        // Road fill
+        const rg = ctx.createLinearGradient(0, SY, 0, GY);
+        rg.addColorStop(0, 'rgba(40,10,100,0.0)');
+        rg.addColorStop(1, 'rgba(40,10,100,0.75)');
+        ctx.fillStyle = rg;
+        ctx.beginPath();
+        ctx.moveTo(bL, GY); ctx.lineTo(tL, SY);
+        ctx.lineTo(tR, SY); ctx.lineTo(bR, GY);
+        ctx.closePath(); ctx.fill();
+
+        // Edge lines
+        ctx.strokeStyle = 'rgba(192,132,252,0.3)';
         ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(0, GY); ctx.lineTo(W, GY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(bL, GY); ctx.lineTo(tL, SY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(bR, GY); ctx.lineTo(tR, SY); ctx.stroke();
+
+        // Centre dashed line (perspective dashes)
+        ctx.strokeStyle = 'rgba(251,191,36,0.22)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 10]);
+        ctx.beginPath(); ctx.moveTo(SX, GY); ctx.lineTo(SX, SY + 8); ctx.stroke();
+        ctx.setLineDash([]);
     }
 
     function drawSun(gl) {
-        // Glow halos
-        [60, 42, 26].forEach((r, i) => {
-            ctx.fillStyle = `rgba(251,191,36,${(0.05 + gl * 0.07) * (1 - i * 0.28)})`;
-            ctx.beginPath(); ctx.arc(SX, SY, r + gl * 20, 0, Math.PI * 2); ctx.fill();
+        // Radial halos
+        [80, 55, 36, 22].forEach((r, i) => {
+            const a = (0.035 + gl * 0.07) / (i * 0.5 + 1);
+            ctx.fillStyle = `rgba(255,200,40,${a})`;
+            ctx.beginPath(); ctx.arc(SX, SY, r + gl * 25, 0, Math.PI * 2); ctx.fill();
         });
         // Core
-        ctx.fillStyle = `rgba(255,224,60,${0.85 + gl * 0.15})`;
-        ctx.beginPath(); ctx.arc(SX, SY, 13 + gl * 5, 0, Math.PI * 2); ctx.fill();
+        const coreR = 11 + gl * 7;
+        const cg = ctx.createRadialGradient(SX, SY, 0, SX, SY, coreR);
+        cg.addColorStop(0,   `rgba(255,255,200,${0.95 + gl * 0.05})`);
+        cg.addColorStop(0.5, `rgba(255,210,50,0.9)`);
+        cg.addColorStop(1,   `rgba(251,140,20,0.7)`);
+        ctx.fillStyle = cg;
+        ctx.beginPath(); ctx.arc(SX, SY, coreR, 0, Math.PI * 2); ctx.fill();
+
         // Rays
-        ctx.strokeStyle = `rgba(251,191,36,${0.38 + gl * 0.45})`;
-        ctx.lineWidth = 1.5;
-        for (let i = 0; i < 8; i++) {
-            const a = i / 8 * Math.PI * 2;
+        const rayAlpha = 0.28 + gl * 0.5;
+        ctx.strokeStyle = `rgba(251,191,36,${rayAlpha})`;
+        for (let i = 0; i < 12; i++) {
+            const a  = i / 12 * Math.PI * 2;
+            const r1 = 15 + gl * 5, r2 = 24 + gl * 12;
+            ctx.lineWidth = 1.2;
             ctx.beginPath();
-            ctx.moveTo(SX + Math.cos(a) * (18 + gl * 3), SY + Math.sin(a) * (18 + gl * 3));
-            ctx.lineTo(SX + Math.cos(a) * (28 + gl * 9), SY + Math.sin(a) * (28 + gl * 9));
+            ctx.moveTo(SX + Math.cos(a)*r1, SY + Math.sin(a)*r1);
+            ctx.lineTo(SX + Math.cos(a)*r2, SY + Math.sin(a)*r2);
             ctx.stroke();
         }
     }
 
-    // ── Stick figure ─────────────────────────────────────────────
-    // Drawn centred at (0,0); translate + optional horizontal flip before calling.
-    function drawFig(x, wc, isBoy, facingRight) {
-        ctx.save();
-        ctx.translate(x, 0);
-        if (!facingRight) ctx.scale(-1, 1);
+    // ── Stick figure (drawn relative to (0,0) = hip position) ──
+    function drawFig(cx, cy, wc, isBoy, facingRight) {
+        const sc = scaleAt(cy);
+        if (sc < 0.03) return;
 
-        const hy  = GY - 1;         // hip   Y
-        const sy  = hy - BODY;      // shoulder Y
-        const hcy = sy - HEAD - 2;  // head centre Y
+        const LEG  = B_LEG  * sc;
+        const BODY = B_BODY * sc;
+        const ARM  = B_ARM  * sc;
+        const HEAD = B_HEAD * sc;
 
-        const ls = Math.sin(wc) * 0.42;      // leg  swing
-        const as = -Math.sin(wc) * 0.36;     // arm  swing (opposite)
+        const ls = Math.sin(wc) * 0.44;
+        const as = -Math.sin(wc) * 0.37;
 
-        const bodyC = isBoy ? '#8b5cf6' : '#ec4899';
+        const bodyC = isBoy ? '#a78bfa' : '#f472b6';
         const pantC = isBoy ? '#5b21b6' : '#9d174d';
 
+        ctx.save();
+        ctx.translate(cx, cy);
+        if (!facingRight) ctx.scale(-1, 1);
+        ctx.globalAlpha = Math.min(1, sc * 4);
         ctx.lineCap = 'round'; ctx.lineJoin = 'round';
 
-        // ── Back leg ──
-        ctx.strokeStyle = pantC; ctx.lineWidth = 4;
+        const lw = (w) => Math.max(0.6, w * sc);
+
+        // Back leg
+        ctx.strokeStyle = pantC; ctx.lineWidth = lw(4);
         ctx.beginPath();
-        ctx.moveTo(0, hy);
-        ctx.lineTo(-Math.sin(ls) * LEG, hy + Math.cos(Math.abs(ls)) * (LEG - 2));
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-Math.sin(ls)*LEG, Math.cos(Math.abs(ls))*(LEG-1.5*sc));
         ctx.stroke();
 
-        // ── Body ──
-        ctx.strokeStyle = bodyC; ctx.lineWidth = 4.5;
-        ctx.beginPath(); ctx.moveTo(0, hy); ctx.lineTo(0, sy); ctx.stroke();
+        // Body
+        ctx.strokeStyle = bodyC; ctx.lineWidth = lw(4.5);
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -BODY); ctx.stroke();
 
-        // ── Girl skirt ──
+        // Girl skirt
         if (!isBoy) {
-            ctx.fillStyle = '#db2777'; ctx.strokeStyle = '#9d174d'; ctx.lineWidth = 1;
+            ctx.fillStyle = '#db2777'; ctx.strokeStyle = '#9d174d'; ctx.lineWidth = lw(1);
             ctx.beginPath();
-            ctx.moveTo(-5, sy + BODY * 0.35);
-            ctx.lineTo(-12, hy); ctx.lineTo(12, hy); ctx.lineTo(5, sy + BODY * 0.35);
+            ctx.moveTo(-4.5*sc, -BODY*0.65); ctx.lineTo(-11*sc, 0);
+            ctx.lineTo( 11*sc,  0);          ctx.lineTo(  4.5*sc, -BODY*0.65);
             ctx.closePath(); ctx.fill(); ctx.stroke();
         }
 
-        // ── Front leg ──
-        ctx.strokeStyle = pantC; ctx.lineWidth = 4;
+        // Front leg
+        ctx.strokeStyle = pantC; ctx.lineWidth = lw(4);
         ctx.beginPath();
-        ctx.moveTo(0, hy);
-        ctx.lineTo(Math.sin(ls) * LEG, hy + Math.cos(Math.abs(ls)) * (LEG - 2));
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.sin(ls)*LEG, Math.cos(Math.abs(ls))*(LEG-1.5*sc));
         ctx.stroke();
 
-        // ── Back arm ──
-        ctx.strokeStyle = bodyC; ctx.lineWidth = 3;
+        // Back arm
+        ctx.strokeStyle = bodyC; ctx.lineWidth = lw(3);
         ctx.beginPath();
-        ctx.moveTo(0, sy);
-        ctx.lineTo(-Math.sin(as) * ARM, sy + Math.cos(Math.abs(as)) * ARM * 0.8);
+        ctx.moveTo(0, -BODY);
+        ctx.lineTo(-Math.sin(as)*ARM, -BODY + Math.cos(Math.abs(as))*ARM*0.8);
         ctx.stroke();
 
-        // ── Front arm ──
+        // Front arm
         ctx.beginPath();
-        ctx.moveTo(0, sy);
-        ctx.lineTo(Math.sin(as) * ARM, sy + Math.cos(Math.abs(as)) * ARM * 0.8);
+        ctx.moveTo(0, -BODY);
+        ctx.lineTo( Math.sin(as)*ARM, -BODY + Math.cos(Math.abs(as))*ARM*0.8);
         ctx.stroke();
 
-        // ── Head ──
-        ctx.fillStyle = '#fde68a'; ctx.strokeStyle = '#b45309'; ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.arc(0, hcy, HEAD, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        // Head
+        const hcy = -BODY - HEAD - 1.5*sc;
+        ctx.fillStyle = '#fde68a'; ctx.strokeStyle = '#b45309'; ctx.lineWidth = lw(1.5);
+        ctx.beginPath(); ctx.arc(0, hcy, HEAD, 0, Math.PI*2); ctx.fill(); ctx.stroke();
 
-        // ── Hair ──
+        // Hair
         ctx.fillStyle = isBoy ? '#78350f' : '#6b1a0a';
         ctx.beginPath();
         if (isBoy) {
-            // Short tuft on top
-            ctx.arc(0, hcy - HEAD, 7, Math.PI, 0, false);
-            ctx.closePath();
+            ctx.arc(0, hcy - HEAD, HEAD*0.72, Math.PI, 0, false);
         } else {
-            // Full top + longer on one side
-            ctx.arc(0, hcy, HEAD + 3, Math.PI, 0, false);
-            ctx.closePath();
+            ctx.arc(0, hcy, HEAD + 3*sc, Math.PI, 0, false);
         }
-        ctx.fill();
+        ctx.closePath(); ctx.fill();
 
-        // ── Eyes ──
+        // Eyes
         ctx.fillStyle = '#1e1b4b';
-        ctx.beginPath(); ctx.arc(-2.8, hcy - 1.5, 1.7, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(2.8,  hcy - 1.5, 1.7, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(-HEAD*0.29, hcy - HEAD*0.14, HEAD*0.19, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc( HEAD*0.29, hcy - HEAD*0.14, HEAD*0.19, 0, Math.PI*2); ctx.fill();
 
-        // ── Smile ──
-        ctx.strokeStyle = '#78350f'; ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.arc(0, hcy + 2, 3.5, 0.18, Math.PI - 0.18); ctx.stroke();
+        // Smile
+        ctx.strokeStyle = '#78350f'; ctx.lineWidth = lw(1.5);
+        ctx.beginPath(); ctx.arc(0, hcy + HEAD*0.22, HEAD*0.36, 0.18, Math.PI - 0.18); ctx.stroke();
 
+        ctx.globalAlpha = 1;
         ctx.restore();
     }
 
-    // ── Heart ────────────────────────────────────────────────────
     function drawHeart(cx, cy, sc, al) {
-        if (al <= 0 || sc <= 0) return;
+        if (al <= 0 || sc <= 0.01) return;
         ctx.save();
         ctx.globalAlpha = Math.min(1, al);
-        ctx.translate(cx, cy);
-        ctx.scale(sc * 0.68, sc * 0.68);
+        ctx.translate(cx, cy); ctx.scale(sc * 0.62, sc * 0.62);
         ctx.fillStyle = '#fb7185';
         ctx.beginPath();
-        ctx.moveTo(0, 5);
-        ctx.bezierCurveTo(0, -6, -15, -9, -15, 0);
-        ctx.bezierCurveTo(-15, 9,  0,  18,  0, 24);
-        ctx.bezierCurveTo(0,  18, 15,   9, 15,  0);
-        ctx.bezierCurveTo(15, -9,  0,  -6,  0,  5);
+        ctx.moveTo(0, 4);
+        ctx.bezierCurveTo(0, -7, -15, -9, -15, 0);
+        ctx.bezierCurveTo(-15, 9, 0, 19, 0, 25);
+        ctx.bezierCurveTo(0, 19, 15, 9, 15, 0);
+        ctx.bezierCurveTo(15, -9, 0, -7, 0, 4);
         ctx.fill();
         ctx.restore();
     }
 
-    // ── Animation loop ───────────────────────────────────────────
+    // ── Animation loop ────────────────────────────────────────────
     function tick() {
         ctx.clearRect(0, 0, W, H);
-        drawBg();
+        drawSky();
+        drawRoad();
         drawSun(sglow);
-
         wc += 0.09;
 
         if (phase === 1) {
-            // Walk toward each other
-            bx = Math.min(bx + 1.5, BMX);
-            gx = Math.max(gx - 1.5, GMX);
-            if (bx >= BMX) { phase = 2; pt = 0; }
+            // Walk toward each other at ground level
+            boyX = Math.min(boyX + 1.5, SX - MEET_SEP);
+            gx   = Math.max(gx   - 1.5, SX + MEET_SEP);
+            drawFig(boyX, GY, wc,            true,  true);
+            drawFig(gx,   GY, wc + Math.PI,  false, false);
+            if (boyX >= SX - MEET_SEP) { phase = 2; pt = 0; }
 
         } else if (phase === 2) {
-            // Stop and let heart appear
+            // Pause — heart blooms
             pt++;
             ha = Math.min(1, pt / 22);
             hs = pt < 18 ? pt / 18 : 1 + Math.sin(pt * 0.13) * 0.1;
-            if (pt > 90) { phase = 3; pt = 0; }
+            drawFig(SX - MEET_SEP, GY, 0, true,  true);
+            drawFig(SX + MEET_SEP, GY, 0, false, true);
+            const heartY = GY - (B_BODY + B_LEG + B_HEAD) - 12;
+            drawHeart(SX, heartY, hs, ha);
+            if (pt > 90) { phase = 3; pt = 0; walkY = GY; }
 
         } else {
-            // Walk together toward the sun
+            // Walk TOGETHER toward the sun — 3-D perspective shrink
             pt++;
-            bx += 1.2;
-            gx = bx + GAP;
-            sglow = Math.min(1, pt / 90);
-            ha = Math.max(0, ha - 0.013);
-            if (bx > W + 55) { cancelAnimationFrame(raf); return; }
-        }
+            walkY  -= 0.85;
+            sglow   = Math.min(1, pt / 95);
+            ha      = Math.max(0, ha - 0.011);
 
-        // Girl faces left only in phase 1
-        const girlRight = phase !== 1;
+            const sc  = scaleAt(walkY);
+            const sep = MEET_SEP * sc;        // separation shrinks with distance
 
-        drawFig(bx, wc,              true,  true);
-        drawFig(gx, wc + Math.PI,    false, girlRight);
+            if (walkY <= SY + 6) { cancelAnimationFrame(raf); return; }
 
-        if (ha > 0) {
-            drawHeart(
-                (bx + gx) / 2,
-                GY - BODY - LEG - HEAD - 14,
-                hs, ha
-            );
+            drawFig(SX - sep, walkY, wc,           true,  true);
+            drawFig(SX + sep, walkY, wc + Math.PI, false, true);
+
+            if (ha > 0) {
+                const hsc  = sc;
+                const hY   = walkY - (B_BODY + B_LEG + B_HEAD) * sc - 10 * sc;
+                drawHeart(SX, hY, hs * hsc, ha);
+            }
         }
 
         raf = requestAnimationFrame(tick);
     }
 
-    // Start after confetti (2 s delay)
     setTimeout(() => { raf = requestAnimationFrame(tick); }, 2000);
 })();
