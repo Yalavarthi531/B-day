@@ -33,6 +33,7 @@ const flashCards = [
     `You are the <em>first</em> girl I talked to in this whole marriage setup.<br><br>Can you make it the <em>last</em>? 🌸`,
     `Don't you like me enough to <em>convince your parents</em> on Jathakam? 🥺`,
     `Do you give more importance to <em>stars than character</em>?<br><br>Do you remember how we felt <em>before</em> Jathakam even came into the picture? 💭`,
+    `I didn't make this to impress you.<br><br>I made this to <em>create a memory for you</em> —<br>one that'll always be part of your story.<br><br>Either as <em>"You know what your dad did..."</em> 🥰<br>or <em>"You know what a guy did..."</em> 😄<br><br>Either way — I'm glad I did. 💛`,
     `I'm still here after every No you just clicked.<br><br>At this point, even the stars should be impressed 😂`
 ]
 
