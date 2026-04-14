@@ -34,15 +34,15 @@
         },
         'yes.html': {
             gopi: [
-                'SHE SAID YES!! 🎉',
+                'Neha said Haan!! 🎉',
                 'Best birthday gift!',
                 'I KNEW it! 😄',
-                'Finally!! 🌟',
+                'Told you 14/36 is fine 😏',
             ],
             neha: [
-                'Okay fine 😊',
+                'Okay okay FINE 😩',
                 'Don\'t call mom again 😂',
-                'You\'re too cute 🌸',
+                'This guy built a website 😭',
                 'Happy bday to me! 🎂',
             ],
         },
