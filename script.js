@@ -40,6 +40,8 @@ const flashCards = [
 let yesTeasedCount = 0
 let noClickCount   = 0
 let runawayEnabled = false
+let runawayCount   = 0
+const MIN_RUNAWAYS = 5
 let musicPlaying   = true
 
 const catGif = document.getElementById('cat-gif')
@@ -82,6 +84,17 @@ function handleYesClick() {
         const msg = yesTeasePokes[Math.min(yesTeasedCount, yesTeasePokes.length - 1)]
         yesTeasedCount++
         showTeaseMessage(msg)
+        return
+    }
+
+    if (runawayCount < MIN_RUNAWAYS) {
+        const left = MIN_RUNAWAYS - runawayCount
+        const msgs = [
+            `Catch it first! 😄`,
+            `Let it run a little more! 🏃`,
+            `Almost... ${left} more escape${left > 1 ? 's' : ''}! 😏`,
+        ]
+        showTeaseMessage(msgs[Math.floor(Math.random() * msgs.length)])
         return
     }
 
@@ -170,6 +183,7 @@ function enableRunaway() {
 }
 
 function runAway() {
+    runawayCount++
     const margin = 20
     const btnW   = noBtn.offsetWidth
     const btnH   = noBtn.offsetHeight
