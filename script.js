@@ -30,11 +30,11 @@ const yesTeasePokes = [
 
 // ── Flashcard content (one per No click) ─────────────────────────────────
 const flashCards = [
+    `You are the <em>first</em> girl I talked to in this whole marriage setup.<br><br>Can you make it the <em>last</em>? 🌸`,
     `Don't you like me enough to <em>convince your parents</em> on Jathakam? 🥺`,
     `Do you give more importance to <em>stars than character</em>?<br><br>Do you remember how we felt <em>before</em> Jathakam even came into the picture? 💭`,
     `I got more than <em>100 matches</em> by now —<br>never connected, never even proceeded further to talk.<br><br>Not once. 🙃`,
-    `I didn't make this to impress you.<br><br>I made this to <em>create a memory for you</em> —<br>one that'll always be part of your story. 💛`,
-    `Either as <em>"You know what your dad did..."</em> 🥰<br>or <em>"You know what a guy did..."</em> 😄<br><br>Either way — I'm glad I did.<br><br><span class="telugu-line">జీవితాంతం నా తోడుగా...<br>నాతో ఏడు అడుగులు నడుస్తావా?</span> 💫`
+    `I didn't make this to impress you.<br><br>I made this to <em>create a memory for you</em> —<br>one that'll always be part of your story.<br><br>Either as <em>"You know what your dad did..."</em> 🥰<br>or <em>"You know what a guy did..."</em> 😄<br><br>Either way — I'm glad I did. 💛`
 ]
 
 let yesTeasedCount = 0
