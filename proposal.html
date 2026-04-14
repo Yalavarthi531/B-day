@@ -22,8 +22,8 @@
 
             <p class="story-line" id="line1">Hey Neha, I know things got a little... complicated between us.</p>
             <p class="story-line" id="line2">You are the <em>first</em> girl I talked to in this whole marriage setup. Can you make it the <em>last</em>? 🌸</p>
-            <p class="story-line" id="line3">I sensed that you really liked me too — and I know your family has concerns. But can <em>you</em> overcome it?</p>
-            <p class="story-line" id="line4">And yes yes yes — I called your mom. <span class="telugu-line">నీతో ఉండాలని తపన తప్ప, మరే ఉద్దేశం లేదు Neha!</span> 🙈</p>
+            <p class="story-line" id="line3">You really liked me, don't you? And I know your family also liked me — and I know they have their concerns about Jathakam, which is understandable! 🌸</p>
+            <p class="story-line" id="line4">And yes yes yes — I called your mom. <span class="telugu-line">నీతో ఉండాలని తపన తప్ప, మరే ఉద్దేశం లేదు Neha! అందుకే నో చెప్తావా? అంత ఈజీగా నో చెప్పేయడమా?</span> 🙈</p>
         </div>
 
         <a href="https://youtube.com/shorts/SqjeD8tXBlc" target="_blank" class="yt-link-btn">
@@ -62,15 +62,13 @@
             <button id="no-btn" onclick="handleNoClick()">No</button>
         </div>
         <div id="tease-toast"></div>
+    </div>
 
-        <!-- Finale — revealed only after No runs away -->
-        <div id="finale-card" class="finale-card" style="display:none;">
-            <p class="finale-line">Don't you like me enough to <em>convince your parents</em> on Jathakam? 🥺</p>
-            <p class="finale-line">Forget Jathakam for a second — do you give more importance to <em>stars than character</em>? Do you remember how we felt <em>before</em> any of this came into picture?</p>
-            <p class="finale-line">I got more than <em>100 matches</em> by now. Never connected. Never even proceeded further to talk. Not once. 🙃</p>
-            <p class="finale-line">I didn't make this to impress you — or to check if you can convince your parents. I made this to <em>create a memory for you</em>. One that'll always be part of your story.</p>
-            <p class="finale-line finale-closer">Either as <em>"You know what your dad did..."</em> 🥰<br>or <em>"You know what a guy did..."</em> 😄<br><br>Either way — I'm glad I did. 💛</p>
-            <p class="finale-telugu"><span class="telugu-line">నాతో ఏడు అడుగులు వేస్తావా?<br>ఏడు జన్మలూ నాతో నడుస్తావా?</span> 💫</p>
+    <!-- Per-No flashcard overlay -->
+    <div id="flashcard-overlay" class="flashcard-overlay" onclick="dismissFlashcard()">
+        <div class="flashcard" id="flashcard">
+            <p id="flashcard-text"></p>
+            <span class="flashcard-hint">tap anywhere to continue</span>
         </div>
     </div>
 

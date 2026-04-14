@@ -529,63 +529,66 @@ h1 {
     height: 240px;
 }
 
-/* ── Finale card ─────────────────────────────────────────── */
-.finale-card {
-    margin: 28px auto 0;
-    max-width: 560px;
-    background: linear-gradient(135deg, rgba(139,92,246,0.13), rgba(251,113,133,0.10));
-    border: 1px solid rgba(139,92,246,0.35);
-    border-radius: 20px;
-    padding: 24px 28px;
-    text-align: left;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 0 40px rgba(139,92,246,0.2), 0 8px 32px rgba(0,0,0,0.4);
-}
-
-.finale-line {
-    color: #e2e8f0;
-    font-size: 1.0rem;
-    font-weight: 700;
-    line-height: 1.8;
-    margin-bottom: 14px;
+/* ── Flashcard overlay ───────────────────────────────────── */
+.flashcard-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 2, 28, 0.88);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
     opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    padding: 24px;
 }
 
-.finale-line em {
+.flashcard-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.flashcard {
+    background: linear-gradient(135deg, rgba(139,92,246,0.22), rgba(251,113,133,0.15));
+    border: 1px solid rgba(139,92,246,0.55);
+    border-radius: 24px;
+    padding: 36px 32px 28px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 0 70px rgba(139,92,246,0.35), 0 16px 48px rgba(0,0,0,0.6);
+}
+
+.flashcard-pop {
+    animation: flashcardPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes flashcardPop {
+    from { transform: scale(0.6); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+
+#flashcard-text {
+    color: #e2e8f0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 2;
+    margin-bottom: 22px;
+    font-family: 'Nunito', sans-serif;
+}
+
+#flashcard-text em {
     color: #fbbf24;
     font-style: normal;
     font-weight: 900;
 }
 
-.finale-closer {
-    color: #f9a8d4;
-    font-size: 1.05rem;
-    font-weight: 800;
-    line-height: 2;
-}
-
-.finale-telugu {
-    text-align: center;
-    margin-top: 6px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    opacity: 0;
-}
-
-.finale-line-in {
-    animation: finaleLineIn 0.7s ease forwards;
-}
-
-@keyframes finaleLineIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.finale-reveal {
-    animation: finaleCardIn 0.6s ease both;
-}
-
-@keyframes finaleCardIn {
-    from { opacity: 0; transform: scale(0.96) translateY(20px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
+.flashcard-hint {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }

@@ -28,10 +28,20 @@ const yesTeasePokes = [
     "Neha... click No first, I promise it'll be worth it 😄"
 ]
 
+// ── Flashcard content (one per No click) ─────────────────────────────────
+const flashCards = [
+    `Don't you like me enough to <em>convince your parents</em> on Jathakam? 🥺`,
+    `Do you give more importance to <em>stars than character</em>?<br><br>Do you remember how we felt <em>before</em> Jathakam even came into the picture? 💭`,
+    `I got more than <em>100 matches</em> by now —<br>never connected, never even proceeded further to talk.<br><br>Not once. 🙃`,
+    `I didn't make this to impress you.<br><br>I made this to <em>create a memory for you</em> —<br>one that'll always be part of your story. 💛`,
+    `Either as <em>"You know what your dad did..."</em> 🥰<br>or <em>"You know what a guy did..."</em> 😄<br><br>Either way — I'm glad I did.<br><br><span class="telugu-line">జీవితాంతం నా తోడుగా...<br>నాతో ఏడు అడుగులు నడుస్తావా?</span> 💫`
+]
+
 let yesTeasedCount = 0
 let noClickCount   = 0
 let runawayEnabled = false
 let musicPlaying   = true
+let flashDismissTimer = null
 
 const catGif = document.getElementById('cat-gif')
 const yesBtn = document.getElementById('yes-btn')
@@ -84,12 +94,41 @@ function showTeaseMessage(msg) {
     toast._timer = setTimeout(() => toast.classList.remove('show'), 2600)
 }
 
+// ── Flashcard ─────────────────────────────────────────────────────────────
+function showFlashcard(index) {
+    const overlay = document.getElementById('flashcard-overlay')
+    const card    = document.getElementById('flashcard')
+    const text    = document.getElementById('flashcard-text')
+
+    const content = flashCards[Math.min(index, flashCards.length - 1)]
+    text.innerHTML = content
+
+    // Reset animation by re-inserting card
+    card.classList.remove('flashcard-pop')
+    void card.offsetWidth
+    card.classList.add('flashcard-pop')
+
+    overlay.classList.add('show')
+
+    // Auto-dismiss after 5s
+    clearTimeout(flashDismissTimer)
+    flashDismissTimer = setTimeout(dismissFlashcard, 5000)
+}
+
+function dismissFlashcard() {
+    clearTimeout(flashDismissTimer)
+    document.getElementById('flashcard-overlay').classList.remove('show')
+}
+
 // ── No button logic ───────────────────────────────────────────────────────
 function handleNoClick() {
     noClickCount++
 
     const msgIndex = Math.min(noClickCount, noMessages.length - 1)
     noBtn.textContent = noMessages[msgIndex]
+
+    // Show flashcard for this click (1-indexed → 0-indexed)
+    showFlashcard(noClickCount - 1)
 
     // Grow Yes button
     const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize)
@@ -125,20 +164,6 @@ function swapGif(src) {
 function enableRunaway() {
     noBtn.addEventListener('mouseover',   runAway)
     noBtn.addEventListener('touchstart',  runAway, { passive: true })
-
-    // Reveal the finale card with staggered line animation
-    const card = document.getElementById('finale-card')
-    if (card) {
-        card.style.display = 'block'
-        card.classList.add('finale-reveal')
-        const lines = card.querySelectorAll('.finale-line, .finale-telugu')
-        lines.forEach((el, i) => {
-            el.style.animationDelay = `${i * 0.55}s`
-            el.classList.add('finale-line-in')
-        })
-        // Scroll smoothly into view after a beat
-        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300)
-    }
 }
 
 function runAway() {
