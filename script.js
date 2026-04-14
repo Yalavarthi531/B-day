@@ -111,7 +111,12 @@ function showFlashcard(index) {
 }
 
 function dismissFlashcard() {
-    document.getElementById('flashcard-overlay').classList.remove('show')
+    const overlay = document.getElementById('flashcard-overlay')
+    overlay.classList.remove('show')
+    // Keep overlay absorbing clicks during the CSS fade-out (350ms)
+    // so the tap doesn't bleed through to the No button underneath
+    overlay.style.pointerEvents = 'all'
+    setTimeout(() => { overlay.style.pointerEvents = '' }, 400)
 }
 
 // ── No button logic ───────────────────────────────────────────────────────
