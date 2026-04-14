@@ -246,23 +246,21 @@
             if (s.pt > 85) { s.phase = 3; s.pt = 0; }
 
         } else {
-            // Walk together → off the right edge, then LOOP
+            // Stay together at meeting point — heart pulses, then loop resets
             s.pt++;
-            s.boyX  += 1.2;
-            s.girlX  = s.boyX + GAP;
-            s.sglow  = Math.min(1, s.sglow + 0.004);
-            s.ha     = Math.max(0, s.ha - 0.013);
+            s.sglow = Math.min(1, s.sglow + 0.004);
+            // Heart gently pulses
+            s.hs = 1 + Math.sin(s.pt * 0.1) * 0.12;
+            s.ha = Math.min(1, s.ha);
 
-            drawFig(s.boyX,  s.wc,           true, true);
-            drawFig(s.girlX, s.wc + Math.PI, false, true);
+            drawFig(W/2 - MEET_SEP, 0, true,  true);
+            drawFig(W/2 + MEET_SEP, 0, false, true);
 
-            if (s.ha > 0) {
-                const heartY = GROUND_Y - LEG - BODY - HEAD - 14;
-                drawHeart((s.boyX + s.girlX) / 2, heartY, s.hs, s.ha);
-            }
+            const heartY = GROUND_Y - LEG - BODY - HEAD - 14;
+            drawHeart(W/2, heartY, s.hs, s.ha);
 
-            // Both off-screen → reset and loop
-            if (s.boyX > W + 60) {
+            // After ~3 seconds of holding, reset and loop
+            if (s.pt > 180) {
                 s = makeState();
             }
         }

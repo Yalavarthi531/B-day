@@ -1,7 +1,9 @@
 /**
  * music-sync.js
- * Keeps background music playing continuously across page navigations
- * by saving/restoring the playback position via sessionStorage.
+ * Keeps background music playing continuously across page navigations.
+ * Strategy: start playing immediately (muted trick), THEN seek to saved
+ * position — so there is never a silence gap, even if the first instant
+ * is slightly off-position.
  */
 (function () {
     const KEY = 'bgMusicTime';
@@ -10,18 +12,26 @@
         const music = document.getElementById('bg-music');
         if (!music) return;
 
-        // ── Restore saved position ────────────────────────────────
         const saved = parseFloat(sessionStorage.getItem(KEY) || '0');
 
-        function seekTo() {
-            if (saved > 0.3) music.currentTime = saved;
-        }
-
-        if (music.readyState >= 2) {
-            seekTo();
-        } else {
-            music.addEventListener('canplay', seekTo, { once: true });
-        }
+        // ── Start playing immediately ─────────────────────────────
+        music.muted  = true;
+        music.volume = 0.3;
+        music.play().then(() => {
+            music.muted = false;
+            // Seek to saved position now that it's playing
+            if (saved > 0.3) {
+                music.currentTime = saved;
+            }
+        }).catch(() => {
+            // Autoplay blocked — restore on first interaction
+            document.addEventListener('click', () => {
+                music.muted = false;
+                music.play().then(() => {
+                    if (saved > 0.3) music.currentTime = saved;
+                }).catch(() => {});
+            }, { once: true });
+        });
 
         // ── Save position just before leaving ────────────────────
         window.addEventListener('beforeunload', function () {

@@ -33,9 +33,6 @@ let noClickCount   = 0
 let runawayEnabled = false
 let musicPlaying   = true
 
-// ── Detect touch device ───────────────────────────────────────────────────
-const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)
-
 const catGif = document.getElementById('cat-gif')
 const yesBtn = document.getElementById('yes-btn')
 const noBtn  = document.getElementById('no-btn')
@@ -66,7 +63,7 @@ function toggleMusic() {
     }
 }
 
-// ── Yes button: desktop = click, mobile = swipe up ────────────────────────
+// ── Yes button: tease first, then navigate on click ───────────────────────
 function handleYesClick() {
     if (!runawayEnabled) {
         const msg = yesTeasePokes[Math.min(yesTeasedCount, yesTeasePokes.length - 1)]
@@ -75,51 +72,8 @@ function handleYesClick() {
         return
     }
 
-    if (isTouchDevice) {
-        // Mobile: don't navigate on plain tap — hint to swipe up
-        showTeaseMessage('↑ Swipe me up to say Haan! 😄')
-    } else {
-        // Desktop: plain click works fine
-        window.location.href = 'yes.html'
-    }
+    window.location.href = 'yes.html'
 }
-
-// ── Mobile swipe-up to confirm ────────────────────────────────────────────
-let swipeTouchStartY = null
-
-yesBtn.addEventListener('touchstart', function (e) {
-    if (!runawayEnabled) return          // tease handled by onclick
-    swipeTouchStartY = e.touches[0].clientY
-    yesBtn.style.transition = 'transform 0.05s'
-}, { passive: true })
-
-yesBtn.addEventListener('touchmove', function (e) {
-    if (swipeTouchStartY === null || !runawayEnabled) return
-    const dy = swipeTouchStartY - e.touches[0].clientY   // positive = upward
-    if (dy > 0) {
-        const lift = Math.min(dy * 0.65, 110)
-        const scale = 1 + dy * 0.0015
-        yesBtn.style.transform = `translateY(-${lift}px) scale(${scale})`
-    }
-}, { passive: true })
-
-yesBtn.addEventListener('touchend', function (e) {
-    if (swipeTouchStartY === null) return
-    const dy = swipeTouchStartY - e.changedTouches[0].clientY
-    swipeTouchStartY = null
-
-    if (dy >= 60 && runawayEnabled) {
-        // ✅ Confirmed — fly it off and navigate
-        yesBtn.style.transition = 'transform 0.4s cubic-bezier(0.4,0,0.2,1)'
-        yesBtn.style.transform  = 'translateY(-350px) scale(1.4)'
-        setTimeout(() => { window.location.href = 'yes.html' }, 380)
-    } else {
-        // ↩ Not enough — bounce back
-        yesBtn.style.transition = 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)'
-        yesBtn.style.transform  = 'translateY(0) scale(1)'
-        setTimeout(() => { yesBtn.style.transition = '' }, 350)
-    }
-}, { passive: true })
 
 // ── Toast ─────────────────────────────────────────────────────────────────
 function showTeaseMessage(msg) {
@@ -157,11 +111,6 @@ function handleNoClick() {
     if (noClickCount >= 5 && !runawayEnabled) {
         enableRunaway()
         runawayEnabled = true
-
-        // On mobile: update button label to hint swipe gesture
-        if (isTouchDevice) {
-            yesBtn.innerHTML = 'Haan! ✨<span class="swipe-hint">↑ swipe up ↑</span>'
-        }
     }
 }
 
