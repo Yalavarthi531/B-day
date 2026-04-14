@@ -528,3 +528,64 @@ h1 {
     width: 240px;
     height: 240px;
 }
+
+/* ── Finale card ─────────────────────────────────────────── */
+.finale-card {
+    margin: 28px auto 0;
+    max-width: 560px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.13), rgba(251,113,133,0.10));
+    border: 1px solid rgba(139,92,246,0.35);
+    border-radius: 20px;
+    padding: 24px 28px;
+    text-align: left;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 40px rgba(139,92,246,0.2), 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.finale-line {
+    color: #e2e8f0;
+    font-size: 1.0rem;
+    font-weight: 700;
+    line-height: 1.8;
+    margin-bottom: 14px;
+    opacity: 0;
+}
+
+.finale-line em {
+    color: #fbbf24;
+    font-style: normal;
+    font-weight: 900;
+}
+
+.finale-closer {
+    color: #f9a8d4;
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 2;
+}
+
+.finale-telugu {
+    text-align: center;
+    margin-top: 6px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    opacity: 0;
+}
+
+.finale-line-in {
+    animation: finaleLineIn 0.7s ease forwards;
+}
+
+@keyframes finaleLineIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.finale-reveal {
+    animation: finaleCardIn 0.6s ease both;
+}
+
+@keyframes finaleCardIn {
+    from { opacity: 0; transform: scale(0.96) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}

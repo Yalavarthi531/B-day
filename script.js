@@ -125,6 +125,20 @@ function swapGif(src) {
 function enableRunaway() {
     noBtn.addEventListener('mouseover',   runAway)
     noBtn.addEventListener('touchstart',  runAway, { passive: true })
+
+    // Reveal the finale card with staggered line animation
+    const card = document.getElementById('finale-card')
+    if (card) {
+        card.style.display = 'block'
+        card.classList.add('finale-reveal')
+        const lines = card.querySelectorAll('.finale-line, .finale-telugu')
+        lines.forEach((el, i) => {
+            el.style.animationDelay = `${i * 0.55}s`
+            el.classList.add('finale-line-in')
+        })
+        // Scroll smoothly into view after a beat
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300)
+    }
 }
 
 function runAway() {
