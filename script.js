@@ -41,7 +41,6 @@ let yesTeasedCount = 0
 let noClickCount   = 0
 let runawayEnabled = false
 let musicPlaying   = true
-let flashDismissTimer = null
 
 const catGif = document.getElementById('cat-gif')
 const yesBtn = document.getElementById('yes-btn')
@@ -109,14 +108,9 @@ function showFlashcard(index) {
     card.classList.add('flashcard-pop')
 
     overlay.classList.add('show')
-
-    // Auto-dismiss after 5s
-    clearTimeout(flashDismissTimer)
-    flashDismissTimer = setTimeout(dismissFlashcard, 5000)
 }
 
 function dismissFlashcard() {
-    clearTimeout(flashDismissTimer)
     document.getElementById('flashcard-overlay').classList.remove('show')
 }
 
