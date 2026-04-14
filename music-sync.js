@@ -24,13 +24,17 @@
                 music.currentTime = saved;
             }
         }).catch(() => {
-            // Autoplay blocked — restore on first interaction
-            document.addEventListener('click', () => {
+            // Autoplay blocked — unlock on first touch or click
+            const unlock = () => {
                 music.muted = false;
                 music.play().then(() => {
                     if (saved > 0.3) music.currentTime = saved;
                 }).catch(() => {});
-            }, { once: true });
+                document.removeEventListener('touchstart', unlock);
+                document.removeEventListener('click', unlock);
+            };
+            document.addEventListener('touchstart', unlock, { once: true, passive: true });
+            document.addEventListener('click', unlock, { once: true });
         });
 
         // ── Save position just before leaving ────────────────────

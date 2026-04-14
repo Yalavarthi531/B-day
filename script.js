@@ -53,10 +53,14 @@ music.volume = 0.3
 music.play().then(() => {
     music.muted = false
 }).catch(() => {
-    document.addEventListener('click', () => {
+    const unlock = () => {
         music.muted = false
         music.play().catch(() => {})
-    }, { once: true })
+        document.removeEventListener('touchstart', unlock)
+        document.removeEventListener('click', unlock)
+    }
+    document.addEventListener('touchstart', unlock, { once: true, passive: true })
+    document.addEventListener('click', unlock, { once: true })
 })
 
 function toggleMusic() {
