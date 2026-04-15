@@ -7,7 +7,7 @@
         'index.html': {
             gopi: [
                 'Hey Neha! 👋',
-                'I made this for you 🎂',
+                'Happy Birthday! 🎂',
                 'Go on... open it! 😊',
                 'Trust me 🌸',
             ],
@@ -34,15 +34,15 @@
         },
         'yes.html': {
             gopi: [
-                'Neha said Haan!! 🎉',
-                'Best birthday gift!',
+                'No, I\'m Techie! 💻',
+                'HTML, CSS, feelings 😅',
                 'I KNEW it! 😄',
-                'Told you 14/36 is fine 😏',
+                '14/36 is fine, right? 😏',
             ],
             neha: [
-                'Okay okay FINE 😩',
+                'Are you crazy?! 😤',
+                'A whole website?? 😭',
                 'Don\'t call mom again 😂',
-                'This guy built a website 😭',
                 'Happy bday to me! 🎂',
             ],
         },
