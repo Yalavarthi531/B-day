@@ -4,7 +4,7 @@
     const ctx = canvas.getContext('2d');
 
     const W = Math.min(480, (window.innerWidth || 480) - 24);
-    const H = 180;
+    const H = 210;
     canvas.width  = W;
     canvas.height = H;
     canvas.style.width  = W + 'px';
@@ -32,6 +32,7 @@
             pt:    0,
             ha:    0, hs: 0,
             sglow: 0,
+            grahaAlpha: 0,
         };
     }
     let s = makeState();
@@ -195,6 +196,72 @@
         ctx.restore();
     }
 
+    // ── Navagrahas ────────────────────────────────────────────
+    const GRAHAS = [
+        { symbol: '☀️', color: '#fbbf24', label: 'Surya'  },
+        { symbol: '🌙', color: '#e2e8f0', label: 'Chandra'},
+        { symbol: '🔴', color: '#ef4444', label: 'Kuja'   },
+        { symbol: '💚', color: '#34d399', label: 'Budha'  },
+        { symbol: '🟡', color: '#fde68a', label: 'Guru'   },
+        { symbol: '⭐', color: '#f9a8d4', label: 'Shukra' },
+        { symbol: '🪐', color: '#94a3b8', label: 'Shani'  },
+        { symbol: '🌑', color: '#c084fc', label: 'Rahu'   },
+        { symbol: '☄️', color: '#fb923c', label: 'Ketu'   },
+    ]
+
+    function drawNavagrahsAndPhrase(alpha, pt) {
+        if (alpha <= 0) return
+        const cx   = W / 2
+        const arcR = Math.min(W * 0.36, 88)   // radius of graha arc
+        const arcY = SY + 8                    // centred near the sun
+
+        // Draw each graha in a semicircle arc above couple
+        GRAHAS.forEach((g, i) => {
+            // stagger each graha's appearance
+            const localAlpha = Math.min(1, Math.max(0, (alpha * 9 - i) ))
+            if (localAlpha <= 0) return
+
+            const angle = Math.PI + (i / (GRAHAS.length - 1)) * Math.PI  // π to 2π (bottom arc)
+            const gx = cx + Math.cos(angle) * arcR
+            const gy = arcY + Math.sin(angle) * arcR * 0.45
+
+            // Glow dot
+            const grad = ctx.createRadialGradient(gx, gy, 0, gx, gy, 10)
+            grad.addColorStop(0, g.color.replace(')', `,${localAlpha})`).replace('rgb', 'rgba'))
+            grad.addColorStop(1, 'rgba(0,0,0,0)')
+            ctx.fillStyle = grad
+            ctx.beginPath()
+            ctx.arc(gx, gy, 10, 0, Math.PI * 2)
+            ctx.fill()
+
+            // Emoji symbol
+            ctx.save()
+            ctx.globalAlpha = localAlpha
+            ctx.font = `${Math.round(12 + localAlpha * 2)}px serif`
+            ctx.textAlign = 'center'
+            ctx.textBaseline = 'middle'
+            ctx.fillText(g.symbol, gx, gy)
+            ctx.restore()
+        })
+
+        // Phrase — fades in after all grahas appear
+        const phraseAlpha = Math.min(1, Math.max(0, alpha * 9 - 9))
+        if (phraseAlpha > 0) {
+            ctx.save()
+            ctx.globalAlpha = phraseAlpha
+            ctx.font = `bold ${Math.round(W * 0.028)}px Nunito, sans-serif`
+            ctx.textAlign = 'center'
+            ctx.textBaseline = 'middle'
+            // Soft glow behind text
+            ctx.shadowColor = 'rgba(139,92,246,0.8)'
+            ctx.shadowBlur  = 10
+            ctx.fillStyle   = '#e2e8f0'
+            ctx.fillText('Let the stars recalculate.', cx, H - 26)
+            ctx.fillText('Some answers don\'t change. 💫', cx, H - 12)
+            ctx.restore()
+        }
+    }
+
     function drawHeart(cx, cy, sc, al) {
         if (al <= 0 || sc <= 0.01) return;
         ctx.save();
@@ -246,21 +313,23 @@
             if (s.pt > 85) { s.phase = 3; s.pt = 0; }
 
         } else {
-            // Stay together at meeting point — heart pulses, then loop resets
+            // Stay together at meeting point — heart pulses, Navagrahas appear, then loop resets
             s.pt++;
             s.sglow = Math.min(1, s.sglow + 0.004);
-            // Heart gently pulses
             s.hs = 1 + Math.sin(s.pt * 0.1) * 0.12;
             s.ha = Math.min(1, s.ha);
+            // Navagrahas start fading in after a short pause
+            if (s.pt > 30) s.grahaAlpha = Math.min(1, s.grahaAlpha + 0.008);
 
             drawFig(W/2 - MEET_SEP, 0, true,  true);
             drawFig(W/2 + MEET_SEP, 0, false, true);
 
             const heartY = GROUND_Y - LEG - BODY - HEAD - 14;
             drawHeart(W/2, heartY, s.hs, s.ha);
+            drawNavagrahsAndPhrase(s.grahaAlpha, s.pt);
 
-            // After ~3 seconds of holding, reset and loop
-            if (s.pt > 180) {
+            // After ~5 seconds of holding, reset and loop
+            if (s.pt > 300) {
                 s = makeState();
             }
         }
