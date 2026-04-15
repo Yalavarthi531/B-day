@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mascots.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@2/dist/lottie-player.js"></script>
 </head>
 <body>
     <canvas id="birthdayCanvas" class="birthday-canvas-bg"></canvas>
@@ -32,15 +31,7 @@
         <!-- Saptapadi -->
         <div class="saptapadi-section">
             <p class="saptapadi-label">జీవితాంతం నా తోడుగా... నాతో ఏడు అడుగులు నడుస్తావా? 💫</p>
-            <lottie-player
-                id="saptapadiLottie"
-                src="couple-walk.json"
-                background="transparent"
-                speed="1"
-                loop
-                autoplay
-                class="saptapadi-lottie">
-            </lottie-player>
+            <canvas id="saptapadiCanvas" class="saptapadi-canvas"></canvas>
         </div>
 
         <!-- Couple walking animation -->
