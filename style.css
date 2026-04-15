@@ -879,11 +879,13 @@ h1 {
     text-shadow: 0 0 16px rgba(232,121,249,0.5);
 }
 
-.saptapadi-canvas {
+.saptapadi-lottie {
     display: block;
     margin: 0 auto;
-    border-radius: 14px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    width: 320px;
+    height: 320px;
+    border-radius: 20px;
+    filter: drop-shadow(0 8px 24px rgba(139,92,246,0.3));
 }
 
 /* ── Ramayana shloka card ────────────────────────────────── */
