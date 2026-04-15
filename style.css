@@ -4,6 +4,180 @@
     box-sizing: border-box;
 }
 
+/* ── Passphrase gate ─────────────────────────────────────── */
+.pass-gate {
+    position: fixed;
+    inset: 0;
+    background: #0d0820;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 24px;
+    transition: opacity 0.5s ease;
+}
+
+.pass-gate.pass-exit {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pass-card {
+    text-align: center;
+    max-width: 380px;
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(139,92,246,0.4);
+    border-radius: 24px;
+    padding: 40px 32px 32px;
+    box-shadow: 0 0 60px rgba(139,92,246,0.2), 0 16px 48px rgba(0,0,0,0.5);
+    animation: fadeIn 0.6s ease both;
+}
+
+.pass-lock {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+}
+
+.pass-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #fbbf24;
+    margin-bottom: 6px;
+}
+
+.pass-hint {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    font-weight: 600;
+    margin-bottom: 22px;
+}
+
+.pass-input {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(139,92,246,0.4);
+    border-radius: 12px;
+    padding: 13px 18px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    text-align: center;
+    letter-spacing: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 14px;
+}
+
+.pass-input:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.2);
+}
+
+.pass-input.pass-shake {
+    animation: passShake 0.4s ease;
+    border-color: #fb7185;
+}
+
+@keyframes passShake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-8px); }
+    40%       { transform: translateX(8px); }
+    60%       { transform: translateX(-5px); }
+    80%       { transform: translateX(5px); }
+}
+
+.pass-btn {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 13px 36px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(139,92,246,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+    width: 100%;
+}
+
+.pass-btn:hover {
+    transform: scale(1.03) translateY(-1px);
+    box-shadow: 0 8px 24px rgba(139,92,246,0.5);
+}
+
+.pass-error {
+    margin-top: 14px;
+    min-height: 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fb7185;
+    font-style: italic;
+}
+
+/* ── Laptop hint popup ───────────────────────────────────── */
+.laptop-hint {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,2,28,0.75);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    padding: 24px;
+}
+
+.laptop-hint-card {
+    background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(251,191,36,0.1));
+    border: 1px solid rgba(251,191,36,0.4);
+    border-radius: 24px;
+    padding: 36px 32px 28px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(251,191,36,0.15), 0 16px 40px rgba(0,0,0,0.5);
+    animation: flashcardPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.laptop-hint-emoji {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.laptop-hint-text {
+    color: #e2e8f0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.8;
+    margin-bottom: 22px;
+}
+
+.laptop-hint-text em {
+    color: #fbbf24;
+    font-style: normal;
+    font-weight: 900;
+}
+
+.laptop-hint-btn {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1a1030;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    padding: 12px 32px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.laptop-hint-btn:hover {
+    transform: scale(1.04);
+}
+
 body {
     background-color: #1a1030;
     font-family: 'Nunito', sans-serif;

@@ -13,6 +13,30 @@
 <body>
     <div class="stars-bg"></div>
 
+    <!-- ── Passphrase gate ───────────────────────────────────── -->
+    <div id="pass-gate" class="pass-gate">
+        <div class="pass-card">
+            <div class="pass-lock">🔐</div>
+            <p class="pass-title">Secret Entry</p>
+            <p class="pass-hint">Enter the passphrase to continue...</p>
+            <input type="text" id="pass-input" class="pass-input"
+                   placeholder="type here..."
+                   autocomplete="off" autocorrect="off" spellcheck="false"
+                   onkeydown="if(event.key==='Enter') checkPass()">
+            <button class="pass-btn" onclick="checkPass()">Enter ✨</button>
+            <p id="pass-error" class="pass-error"></p>
+        </div>
+    </div>
+
+    <!-- ── Laptop hint popup ─────────────────────────────────── -->
+    <div id="laptop-hint" class="laptop-hint" style="display:none;">
+        <div class="laptop-hint-card">
+            <p class="laptop-hint-emoji">💻</p>
+            <p class="laptop-hint-text">For the full experience,<br>open this on a <em>laptop</em>!</p>
+            <button class="laptop-hint-btn" onclick="dismissLaptopHint()">Got it! 👍</button>
+        </div>
+    </div>
+
     <div class="container landing-container">
         <div class="birthday-badge">🎂 April 17th 🎂</div>
 
@@ -38,13 +62,68 @@
     <button id="music-toggle" onclick="toggleMusicLanding()" title="Toggle music">🔊</button>
 
     <script>
-        // Confetti on load
-        window.addEventListener('load', () => {
+        // ── Passphrase gate ───────────────────────────────────────────────────
+        const PASS = 'todayismybday'
+        let wrongCount = 0
+        const wrongMsgs = [
+            "Nope! 😂 Hint: it's your birthday...",
+            "Wrong again! Think harder 🤔",
+            "Arey... so close, yet so far 😏",
+            "Nahi nahi nahi! 🙅 One more try!",
+            "It's literally your birthday Neha 😭",
+        ]
+
+        function checkPass() {
+            const val = document.getElementById('pass-input').value.trim().toLowerCase()
+            if (val === PASS) {
+                sessionStorage.setItem('passGranted', '1')
+                const gate = document.getElementById('pass-gate')
+                gate.classList.add('pass-exit')
+                setTimeout(() => {
+                    gate.style.display = 'none'
+                    showLaptopHint()
+                    startPage()
+                }, 500)
+            } else {
+                const err = document.getElementById('pass-error')
+                err.textContent = wrongMsgs[Math.min(wrongCount, wrongMsgs.length - 1)]
+                wrongCount++
+                const input = document.getElementById('pass-input')
+                input.classList.add('pass-shake')
+                setTimeout(() => input.classList.remove('pass-shake'), 400)
+            }
+        }
+
+        // ── Laptop hint ───────────────────────────────────────────────────────
+        function showLaptopHint() {
+            if (sessionStorage.getItem('laptopHintShown')) return
+            sessionStorage.setItem('laptopHintShown', '1')
+            document.getElementById('laptop-hint').style.display = 'flex'
+        }
+
+        function dismissLaptopHint() {
+            document.getElementById('laptop-hint').style.display = 'none'
+        }
+
+        // ── Page start (confetti + music) — runs after gate clears ────────────
+        function startPage() {
             confetti({ particleCount: 120, spread: 100, origin: { x: 0.5, y: 0.2 },
                 colors: ['#f9a8d4','#fbbf24','#c084fc','#34d399','#60a5fa','#fb7185','#fff'] })
+        }
+
+        // ── On load: skip gate if already granted ─────────────────────────────
+        window.addEventListener('load', () => {
+            if (sessionStorage.getItem('passGranted')) {
+                document.getElementById('pass-gate').style.display = 'none'
+                showLaptopHint()
+                startPage()
+            } else {
+                // Focus input for easy typing
+                setTimeout(() => document.getElementById('pass-input').focus(), 300)
+            }
         })
 
-        // Music autoplay
+        // ── Music autoplay ────────────────────────────────────────────────────
         const music = document.getElementById('bg-music')
         let musicPlaying = true
         music.muted = true
