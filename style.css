@@ -704,7 +704,19 @@ h1 {
 }
 .yes-container h1.yes-title {
     font-size: 2.4rem;
-    animation: bounceTitle 0.6s ease infinite alternate;
+    font-weight: 900;
+    background: linear-gradient(
+        90deg,
+        #fbbf24 0%, #f472b6 22%, #c084fc 44%,
+        #60a5fa 62%, #34d399 80%, #fbbf24 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 16px rgba(251,191,36,0.5));
+    animation: bounceTitle 0.6s ease infinite alternate, shimmerTitle 3s linear infinite;
 }
 
 @keyframes bounceTitle {
@@ -719,6 +731,7 @@ h1 {
     margin-top: 24px;
     line-height: 1.9;
     animation: fadeIn 1s ease 0.5s both;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.7);
 }
 
 .yes-sub {
@@ -742,6 +755,18 @@ h1 {
 .yes-container #cat-gif {
     width: 240px;
     height: 240px;
+    border-radius: 50%;
+    border: 3px solid rgba(251,191,36,0.5);
+    box-shadow:
+        0 0 0 6px rgba(251,191,36,0.12),
+        0 0 40px rgba(251,191,36,0.35),
+        0 0 80px rgba(236,72,153,0.2);
+    animation: gifGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes gifGlow {
+    from { box-shadow: 0 0 0 6px rgba(251,191,36,0.12), 0 0 40px rgba(251,191,36,0.35), 0 0 80px rgba(236,72,153,0.2); }
+    to   { box-shadow: 0 0 0 6px rgba(251,191,36,0.2),  0 0 60px rgba(251,191,36,0.55), 0 0 100px rgba(236,72,153,0.35); }
 }
 
 /* ── Instagram reel embed ────────────────────────────────── */
@@ -764,13 +789,21 @@ h1 {
 .real-graha-card {
     margin: 24px auto 0;
     max-width: 520px;
-    background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(139,92,246,0.1));
-    border: 1px solid rgba(251,191,36,0.3);
+    background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(139,92,246,0.14));
+    border: 1px solid rgba(251,191,36,0.45);
     border-radius: 20px;
     padding: 24px 28px;
     text-align: center;
-    box-shadow: 0 0 40px rgba(251,191,36,0.1), 0 8px 32px rgba(0,0,0,0.3);
-    animation: fadeIn 1s ease 0.5s both;
+    box-shadow:
+        0 0 50px rgba(251,191,36,0.18),
+        0 0 100px rgba(139,92,246,0.1),
+        0 8px 32px rgba(0,0,0,0.3);
+    animation: fadeIn 1s ease 0.5s both, cardPulse 4s ease-in-out infinite;
+}
+
+@keyframes cardPulse {
+    0%, 100% { box-shadow: 0 0 50px rgba(251,191,36,0.18), 0 0 100px rgba(139,92,246,0.1), 0 8px 32px rgba(0,0,0,0.3); }
+    50%       { box-shadow: 0 0 70px rgba(251,191,36,0.30), 0 0 120px rgba(139,92,246,0.2), 0 8px 40px rgba(0,0,0,0.4); }
 }
 
 .real-graha-title {
@@ -831,10 +864,11 @@ h1 {
 .saptapadi-label {
     font-size: 1rem;
     font-weight: 800;
-    color: #c084fc;
+    color: #e879f9;
     font-style: italic;
     margin-bottom: 10px;
-    animation: fadeIn 1s ease both;
+    animation: fadeIn 1s ease both, pulseAsk 2.5s ease-in-out infinite;
+    text-shadow: 0 0 16px rgba(232,121,249,0.5);
 }
 
 .saptapadi-canvas {
@@ -848,13 +882,21 @@ h1 {
 .shloka-card {
     margin: 24px auto 0;
     max-width: 520px;
-    background: linear-gradient(160deg, rgba(251,191,36,0.07), rgba(180,83,9,0.08));
-    border: 1px solid rgba(251,191,36,0.35);
+    background: linear-gradient(160deg, rgba(251,191,36,0.1), rgba(180,83,9,0.1));
+    border: 1px solid rgba(251,191,36,0.5);
     border-radius: 20px;
     padding: 28px 28px 24px;
     text-align: center;
-    box-shadow: 0 0 40px rgba(251,191,36,0.08), 0 8px 32px rgba(0,0,0,0.3);
-    animation: fadeIn 1s ease 0.8s both;
+    box-shadow:
+        0 0 50px rgba(251,191,36,0.2),
+        0 0 90px rgba(245,158,11,0.1),
+        0 8px 32px rgba(0,0,0,0.3);
+    animation: fadeIn 1s ease 0.8s both, shlokaGlow 3s ease-in-out infinite;
+}
+
+@keyframes shlokaGlow {
+    0%, 100% { border-color: rgba(251,191,36,0.5); box-shadow: 0 0 50px rgba(251,191,36,0.2), 0 8px 32px rgba(0,0,0,0.3); }
+    50%       { border-color: rgba(251,191,36,0.8); box-shadow: 0 0 70px rgba(251,191,36,0.38), 0 8px 40px rgba(0,0,0,0.4); }
 }
 
 .shloka-diya {
