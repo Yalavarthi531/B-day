@@ -780,6 +780,29 @@ h1 {
 }
 
 
+/* ── Saptapadi section ───────────────────────────────────── */
+.saptapadi-section {
+    margin: 20px auto 0;
+    max-width: 480px;
+    text-align: center;
+}
+
+.saptapadi-label {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #c084fc;
+    font-style: italic;
+    margin-bottom: 10px;
+    animation: fadeIn 1s ease both;
+}
+
+.saptapadi-canvas {
+    display: block;
+    margin: 0 auto;
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+
 /* ── Ramayana shloka card ────────────────────────────────── */
 .shloka-card {
     margin: 24px auto 0;
