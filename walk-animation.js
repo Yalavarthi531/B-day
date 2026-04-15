@@ -244,8 +244,8 @@
             ctx.restore()
         })
 
-        // Phrase — fades in after all grahas appear
-        const phraseAlpha = Math.min(1, Math.max(0, alpha * 9 - 9))
+        // Phrase — fades in after all grahas appear (pt > 160)
+        const phraseAlpha = Math.min(1, Math.max(0, (pt - 160) / 35))
         if (phraseAlpha > 0) {
             ctx.save()
             ctx.globalAlpha = phraseAlpha
@@ -328,8 +328,8 @@
             drawHeart(W/2, heartY, s.hs, s.ha);
             drawNavagrahsAndPhrase(s.grahaAlpha, s.pt);
 
-            // After ~5 seconds of holding, reset and loop
-            if (s.pt > 300) {
+            // After ~7 seconds of holding, reset and loop
+            if (s.pt > 420) {
                 s = makeState();
             }
         }
