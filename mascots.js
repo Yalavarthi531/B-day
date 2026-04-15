@@ -35,13 +35,13 @@
         'yes.html': {
             gopi: [
                 'No, I\'m Techie! 💻',
-                'HTML, CSS, feelings 😅',
+                'Do you like it? 😊',
                 'I KNEW it! 😄',
                 '14/36 is fine, right? 😏',
             ],
             neha: [
                 'Are you crazy?! 😤',
-                'A whole website?? 😭',
+                'Yes, it\'s fun! 😄🎉',
                 'Don\'t call mom again 😂',
                 'Happy bday to me! 🎂',
             ],
