@@ -807,7 +807,30 @@ h1 {
     to   { box-shadow: 0 0 0 6px rgba(251,191,36,0.2),  0 0 60px rgba(251,191,36,0.55), 0 0 100px rgba(236,72,153,0.35); }
 }
 
-/* ── Reels row ───────────────────────────────────────────── */
+/* ── YouTube closing section ─────────────────────────────── */
+.yt-closing {
+    margin: 32px auto 0;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+}
+
+.yt-frame {
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: block;
+}
+
+.closing-line {
+    margin-top: 24px;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #fbbf24;
+    line-height: 1.8;
+    animation: fadeIn 1s ease both;
+    text-shadow: 0 0 20px rgba(251,191,36,0.4);
+    padding-bottom: 40px;
+}
 .reels-row {
     display: flex;
     gap: 16px;
