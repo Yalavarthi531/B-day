@@ -1,43 +1,49 @@
 /**
  * music-sync.js
- * Keeps background music playing continuously across page navigations.
- * Strategy: start playing immediately (muted trick), THEN seek to saved
- * position — so there is never a silence gap, even if the first instant
- * is slightly off-position.
+ * - Only plays if musicStarted flag is set (i.e. user passed both gates)
+ * - Saves position every second AND on beforeunload to minimise gap between pages
  */
 (function () {
-    const KEY = 'bgMusicTime';
+    const KEY         = 'bgMusicTime';
+    const STARTED_KEY = 'musicStarted';
 
     document.addEventListener('DOMContentLoaded', function () {
         const music = document.getElementById('bg-music');
         if (!music) return;
 
+        // Don't play at all until the passphrase + quiz gates have been cleared
+        if (!sessionStorage.getItem(STARTED_KEY)) return;
+
         const saved = parseFloat(sessionStorage.getItem(KEY) || '0');
 
-        // ── Start playing immediately ─────────────────────────────
         music.muted  = true;
         music.volume = 0.3;
+
         music.play().then(() => {
             music.muted = false;
-            // Seek to saved position now that it's playing
-            if (saved > 0.3) {
-                music.currentTime = saved;
-            }
+            if (saved > 0.3) music.currentTime = saved;
         }).catch(() => {
-            // Autoplay blocked — unlock on first touch or click
+            // Autoplay blocked — unlock on first interaction
             const unlock = () => {
                 music.muted = false;
                 music.play().then(() => {
                     if (saved > 0.3) music.currentTime = saved;
                 }).catch(() => {});
                 document.removeEventListener('touchstart', unlock);
-                document.removeEventListener('click', unlock);
+                document.removeEventListener('click',      unlock);
             };
             document.addEventListener('touchstart', unlock, { once: true, passive: true });
-            document.addEventListener('click', unlock, { once: true });
+            document.addEventListener('click',      unlock, { once: true });
         });
 
-        // ── Save position just before leaving ────────────────────
+        // Save position every second — minimises the silence gap on page change
+        setInterval(function () {
+            if (!music.paused) {
+                sessionStorage.setItem(KEY, music.currentTime.toFixed(3));
+            }
+        }, 1000);
+
+        // Also save on unload as a safety net
         window.addEventListener('beforeunload', function () {
             sessionStorage.setItem(KEY, music.currentTime.toFixed(3));
         });

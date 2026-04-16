@@ -73,7 +73,7 @@
         </button>
     </div>
 
-    <audio id="bg-music" loop autoplay muted>
+    <audio id="bg-music" loop>
         <source src="music/beabadoobee - Glue Song (Lyrics).mp3" type="audio/mpeg">
     </audio>
 
@@ -141,6 +141,7 @@
                     setTimeout(() => {
                         document.getElementById('quiz-gate').style.display = 'none'
                         showLaptopHint()
+                        startMusic()
                         startPage()
                     }, 500)
                 }, 1200)
@@ -183,23 +184,30 @@
             }
         })
 
-        // ── Music autoplay ────────────────────────────────────────────────────
-        const music = document.getElementById('bg-music')
-        let musicPlaying = true
-        music.muted = true
-        music.volume = 0.3
-        music.play().then(() => { music.muted = false }).catch(() => {
-            const unlock = () => {
-                music.muted = false
-                music.play().catch(() => {})
-                document.removeEventListener('touchstart', unlock)
-                document.removeEventListener('click', unlock)
-            }
-            document.addEventListener('touchstart', unlock, { once: true, passive: true })
-            document.addEventListener('click', unlock, { once: true })
-        })
+        // ── Music — starts only after both gates clear ────────────────────────
+        let musicPlaying = false
+
+        function startMusic() {
+            sessionStorage.setItem('musicStarted', '1')
+            sessionStorage.removeItem('bgMusicTime')   // fresh start from 0
+            const music = document.getElementById('bg-music')
+            music.volume = 0.3
+            music.muted  = true
+            music.play().then(() => { music.muted = false; musicPlaying = true }).catch(() => {
+                const unlock = () => {
+                    music.muted = false
+                    music.play().then(() => { musicPlaying = true }).catch(() => {})
+                    document.removeEventListener('touchstart', unlock)
+                    document.removeEventListener('click', unlock)
+                }
+                document.addEventListener('touchstart', unlock, { once: true, passive: true })
+                document.addEventListener('click', unlock, { once: true })
+            })
+            document.getElementById('music-toggle').textContent = '🔊'
+        }
 
         function toggleMusicLanding() {
+            const music = document.getElementById('bg-music')
             if (musicPlaying) {
                 music.pause(); musicPlaying = false
                 document.getElementById('music-toggle').textContent = '🔇'
