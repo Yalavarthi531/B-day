@@ -829,7 +829,17 @@ h1 {
     line-height: 1.8;
     animation: fadeIn 1s ease both;
     text-shadow: 0 0 20px rgba(251,191,36,0.4);
-    padding-bottom: 40px;
+}
+
+.closing-funny {
+    margin-top: 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #94a3b8;
+    font-style: italic;
+    line-height: 1.8;
+    animation: fadeIn 1s ease 0.4s both;
+    padding-bottom: 48px;
 }
 .reels-row {
     display: flex;
