@@ -118,6 +118,14 @@
     box-shadow: 0 8px 24px rgba(139,92,246,0.5);
 }
 
+.quiz-stakes {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    font-weight: 700;
+    font-style: italic;
+    margin-bottom: 18px;
+}
+
 .quiz-options {
     display: grid;
     grid-template-columns: 1fr 1fr;
