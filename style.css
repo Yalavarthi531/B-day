@@ -841,6 +841,17 @@ h1 {
     animation: fadeIn 1s ease 0.4s both;
 }
 
+.closing-disclaimer {
+    margin-top: 18px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #475569;
+    font-style: italic;
+    letter-spacing: 0.3px;
+    animation: fadeIn 1s ease 1s both;
+    padding-bottom: 56px;
+}
+
 .closing-anyway {
     margin-top: 20px;
     font-size: 1.1rem;
