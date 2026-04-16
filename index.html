@@ -17,14 +17,15 @@
     <!-- ── Passphrase gate ───────────────────────────────────── -->
     <div id="pass-gate" class="pass-gate">
         <div class="pass-card">
-            <div class="pass-lock">🔐</div>
-            <p class="pass-title">Secret Entry</p>
-            <p class="pass-hint">Enter the passphrase to continue...</p>
+            <div class="pass-lock">🎂🔑</div>
+            <p class="pass-title">Hey Neha, you're finally here! 👀</p>
+            <p class="pass-hint">Someone stayed up way too late building this just for you 😅💛</p>
+            <p class="pass-hint" style="margin-top:-10px; margin-bottom:20px;">Ask Gopi for the secret key to unlock what's inside 🔑</p>
             <input type="text" id="pass-input" class="pass-input"
-                   placeholder="type here..."
+                   placeholder="secret key here..."
                    autocomplete="off" autocorrect="off" spellcheck="false"
                    onkeydown="if(event.key==='Enter') checkPass()">
-            <button class="pass-btn" onclick="checkPass()">Enter ✨</button>
+            <button class="pass-btn" onclick="checkPass()">Unlock ✨</button>
             <p id="pass-error" class="pass-error"></p>
         </div>
     </div>
