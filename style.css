@@ -769,20 +769,33 @@ h1 {
     to   { box-shadow: 0 0 0 6px rgba(251,191,36,0.2),  0 0 60px rgba(251,191,36,0.55), 0 0 100px rgba(236,72,153,0.35); }
 }
 
-/* ── Instagram reel embed ────────────────────────────────── */
-.reel-container {
+/* ── Reels row ───────────────────────────────────────────── */
+.reels-row {
     display: flex;
+    gap: 16px;
     justify-content: center;
-    margin: 20px auto 10px;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    max-width: 320px;
+    flex-wrap: wrap;
+    margin: 24px auto 0;
+}
+
+.reel-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.reel-label {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #fbbf24;
+    letter-spacing: 0.5px;
 }
 
 .reel-frame {
     display: block;
     border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 /* ── Real Navagrahas card ─────────────────────────────────── */
