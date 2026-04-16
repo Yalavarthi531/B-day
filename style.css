@@ -843,13 +843,41 @@ h1 {
 
 .closing-disclaimer {
     margin-top: 18px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: #475569;
+    color: #cbd5e1;
     font-style: italic;
     letter-spacing: 0.3px;
     animation: fadeIn 1s ease 1s both;
     padding-bottom: 56px;
+}
+
+.yt-watch-label {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #e2e8f0;
+    margin-bottom: 12px;
+}
+
+.yt-watch-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff0000cc, #cc0000cc);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 900;
+    padding: 14px 36px;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(255,0,0,0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+}
+
+.yt-watch-btn:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 8px 28px rgba(255,0,0,0.5);
 }
 
 .closing-anyway {
