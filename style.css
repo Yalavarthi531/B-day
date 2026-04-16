@@ -839,7 +839,17 @@ h1 {
     font-style: italic;
     line-height: 1.8;
     animation: fadeIn 1s ease 0.4s both;
-    padding-bottom: 48px;
+}
+
+.closing-anyway {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #f9a8d4;
+    line-height: 1.9;
+    animation: fadeIn 1s ease 0.7s both;
+    text-shadow: 0 0 16px rgba(249,168,212,0.35);
+    padding-bottom: 56px;
 }
 .reels-row {
     display: flex;
