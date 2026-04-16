@@ -38,6 +38,22 @@
         </div>
     </div>
 
+    <!-- ── Quiz gate ─────────────────────────────────────────── -->
+    <div id="quiz-gate" class="pass-gate" style="display:none;">
+        <div class="pass-card">
+            <div class="pass-lock">💬</div>
+            <p class="pass-title">Quick question!</p>
+            <p class="pass-hint">When did we talk for the 1st time?</p>
+            <div class="quiz-options" id="quiz-options">
+                <button class="quiz-opt" onclick="checkQuiz(this, false)">14 Feb 2026 💘</button>
+                <button class="quiz-opt" onclick="checkQuiz(this, false)">1 Jan 2026 🎆</button>
+                <button class="quiz-opt correct" onclick="checkQuiz(this, true)">23 Mar 2026 ✨</button>
+                <button class="quiz-opt" onclick="checkQuiz(this, false)">17 Apr 2026 🎂</button>
+            </div>
+            <p id="quiz-msg" class="pass-error"></p>
+        </div>
+    </div>
+
     <div class="container landing-container">
         <div class="birthday-badge">🎂 April 17th 🎂</div>
 
@@ -77,13 +93,19 @@
         function checkPass() {
             const val = document.getElementById('pass-input').value.trim().toLowerCase()
             if (val === PASS) {
-                sessionStorage.setItem('passGranted', '1')
                 const gate = document.getElementById('pass-gate')
                 gate.classList.add('pass-exit')
                 setTimeout(() => {
                     gate.style.display = 'none'
-                    showLaptopHint()
-                    startPage()
+                    // Show quiz next
+                    const quiz = document.getElementById('quiz-gate')
+                    quiz.style.display = 'flex'
+                    quiz.style.opacity = '0'
+                    requestAnimationFrame(() => { quiz.style.transition = 'opacity 0.5s'; quiz.style.opacity = '1' })
+                    // Shuffle option order
+                    const opts = document.getElementById('quiz-options')
+                    for (let i = opts.children.length; i >= 0; i--)
+                        opts.appendChild(opts.children[Math.random() * i | 0])
                 }, 500)
             } else {
                 const err = document.getElementById('pass-error')
@@ -92,6 +114,42 @@
                 const input = document.getElementById('pass-input')
                 input.classList.add('pass-shake')
                 setTimeout(() => input.classList.remove('pass-shake'), 400)
+            }
+        }
+
+        let quizWrong = 0
+        const quizWrongMsgs = [
+            "Nope! 😂 Think harder...",
+            "Are you sure? That doesn't sound right 🤔",
+            "Arey Neha! You forgot already? 😭",
+            "Hint: it was in March... 😏",
+        ]
+
+        function checkQuiz(btn, correct) {
+            const msg = document.getElementById('quiz-msg')
+            if (correct) {
+                btn.style.background = 'linear-gradient(135deg,#34d399,#059669)'
+                btn.style.color = '#fff'
+                msg.style.color = '#34d399'
+                msg.textContent = 'That\'s our day! 🥹💛'
+                // Disable all buttons
+                document.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true)
+                setTimeout(() => {
+                    sessionStorage.setItem('passGranted', '1')
+                    document.getElementById('quiz-gate').style.opacity = '0'
+                    setTimeout(() => {
+                        document.getElementById('quiz-gate').style.display = 'none'
+                        showLaptopHint()
+                        startPage()
+                    }, 500)
+                }, 1200)
+            } else {
+                btn.style.background = 'rgba(251,113,133,0.25)'
+                btn.style.borderColor = '#fb7185'
+                btn.disabled = true
+                msg.style.color = '#fb7185'
+                msg.textContent = quizWrongMsgs[Math.min(quizWrong, quizWrongMsgs.length - 1)]
+                quizWrong++
             }
         }
 
@@ -112,14 +170,14 @@
                 colors: ['#f9a8d4','#fbbf24','#c084fc','#34d399','#60a5fa','#fb7185','#fff'] })
         }
 
-        // ── On load: skip gate if already granted ─────────────────────────────
+        // ── On load: skip gates if already granted ────────────────────────────
         window.addEventListener('load', () => {
             if (sessionStorage.getItem('passGranted')) {
                 document.getElementById('pass-gate').style.display = 'none'
+                document.getElementById('quiz-gate').style.display = 'none'
                 showLaptopHint()
                 startPage()
             } else {
-                // Focus input for easy typing
                 setTimeout(() => document.getElementById('pass-input').focus(), 300)
             }
         })

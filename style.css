@@ -118,8 +118,38 @@
     box-shadow: 0 8px 24px rgba(139,92,246,0.5);
 }
 
+.quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.quiz-opt {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(139,92,246,0.35);
+    border-radius: 12px;
+    color: #e2e8f0;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 12px 10px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, border-color 0.2s;
+}
+
+.quiz-opt:hover:not(:disabled) {
+    background: rgba(139,92,246,0.2);
+    border-color: #8b5cf6;
+    transform: scale(1.03);
+}
+
+.quiz-opt:disabled {
+    cursor: default;
+    opacity: 0.7;
+}
+
 .pass-error {
-    margin-top: 14px;
     min-height: 1.4rem;
     font-size: 0.9rem;
     font-weight: 700;
