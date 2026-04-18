@@ -138,6 +138,7 @@
                 document.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true)
                 setTimeout(() => {
                     sessionStorage.setItem('passGranted', '1')
+                    notifyVisit('first-visit')
                     document.getElementById('quiz-gate').style.opacity = '0'
                     setTimeout(() => {
                         document.getElementById('quiz-gate').style.display = 'none'
@@ -173,6 +174,24 @@
                 colors: ['#f9a8d4','#fbbf24','#c084fc','#34d399','#60a5fa','#fb7185','#fff'] })
         }
 
+        // ── Visit notification ────────────────────────────────────────────────
+        function notifyVisit(type) {
+            const now = new Date().toLocaleString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                dateStyle: 'full', timeStyle: 'short'
+            })
+            const messages = {
+                'first-visit': { subject: '🎉 Neha just unlocked your birthday page!', msg: 'She entered the passphrase and answered the quiz — she\'s inside! 🥹💛' },
+                'revisit':     { subject: '👀 Neha is back — reopening your birthday page!', msg: 'She came back to look at it again 💛😊' },
+            }
+            const { subject, msg } = messages[type] || messages['revisit']
+            fetch('https://formspree.io/f/xkokrywl', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ _subject: subject, message: msg, time: now })
+            }).catch(() => {})   // silent — never interrupts the experience
+        }
+
         // ── On load: skip gates if already granted ────────────────────────────
         window.addEventListener('load', () => {
             if (sessionStorage.getItem('passGranted')) {
@@ -180,6 +199,7 @@
                 document.getElementById('quiz-gate').style.display = 'none'
                 showLaptopHint()
                 startPage()
+                notifyVisit('revisit')
             } else {
                 setTimeout(() => document.getElementById('pass-input').focus(), 300)
             }
